@@ -15,7 +15,7 @@ plugins {
 	id "application"
 }
 
-version = '1.0.0'
+version = '2.0.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 mainClassName = "com.cyosp.homebank.server.HomebankServerApplication"

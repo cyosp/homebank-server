@@ -13,6 +13,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.cyosp.homebank.server.model.PaymentMode.NO_PAYMENT_MODE_DEFINED;
+import static com.cyosp.homebank.server.model.PaymentMode.getPaymentModes;
+import static java.util.Optional.ofNullable;
+
 @Service
 public class HomebankService {
 
@@ -61,7 +65,7 @@ public class HomebankService {
         return df.format(amount) + " " + currency.getSymb();
     }
 
-    public List<AccountResponse> getAccounts() {
+    public List<AccountResponse> accounts() {
         List<AccountResponse> ret = new ArrayList<>();
 
         for (Account account : homebankRepository.getAccounts()) {
@@ -70,13 +74,20 @@ public class HomebankService {
 
             AccountResponse accountResponse = new AccountResponse();
             BeanUtils.copyProperties(account, accountResponse);
+
             OptionsResponse optionsResponse = new OptionsResponse();
             BeanUtils.copyProperties(options, optionsResponse);
             accountResponse.setOptions(optionsResponse);
+
+            Currency currency = homebankRepository.currency(account);
             CurrencyResponse currencyResponse = new CurrencyResponse();
-            BeanUtils.copyProperties(account.getCurrency(), currencyResponse);
+            BeanUtils.copyProperties(currency, currencyResponse);
             accountResponse.setCurrency(currencyResponse);
-            accountResponse.setBalance(formatAmount(account.getBalance(), account.getCurrency()));
+
+            BigDecimal balance = homebankRepository.operations(account)
+                    .map(Operation::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            accountResponse.setBalance(formatAmount(balance, currency));
 
             ret.add(accountResponse);
         }
@@ -87,25 +98,25 @@ public class HomebankService {
     public List<OperationResponse> getOperationsByAccount(int id) {
         List<OperationResponse> ret = new ArrayList<>();
 
-        for (Operation operation : homebankRepository.getOperationsByAccount(id)) {
+        homebankRepository.operations(homebankRepository.account(id)).forEach(operation -> {
             operation.convertJulianToDate();
             OperationResponse operationResponse = new OperationResponse();
             BeanUtils.copyProperties(operation, operationResponse);
             operationResponse.setDateFormatted(SIMPLE_DATE_FORMAT.format(operation.getJavaDate()));
 
-            if (operation.getPaymode() != null) {
-                PaymentMode paymentMode =
-                        PaymentMode.getPaymentModes().stream()
-                                .filter(pm -> pm.getCode().equals(operation.getPaymode()))
-                                .findFirst()
-                                .get();
-                operationResponse.setPaymodeName(paymentMode.getName());
-            } else operationResponse.setPaymodeName("");
+            PaymentMode paymentMode;
+            if (ofNullable(operation.getPaymode()).isPresent()) {
+                paymentMode = getPaymentModes().stream()
+                        .filter(pm -> pm.getCode().equals(operation.getPaymode()))
+                        .findFirst()
+                        .orElse(NO_PAYMENT_MODE_DEFINED);
+            } else paymentMode = NO_PAYMENT_MODE_DEFINED;
+            operationResponse.setPaymodeName(paymentMode.getName());
 
             operationResponse.setAmount(formatAmount(operation.getAmount(), operation.getCurrency()));
             operationResponse.setBalance(formatAmount(operation.getBalance(), operation.getCurrency()));
             ret.add(operationResponse);
-        }
+        });
 
         return ret;
     }
@@ -163,7 +174,7 @@ public class HomebankService {
     public List<OperationResponse> getOperations() {
         List<OperationResponse> ret = new ArrayList<>();
 
-        for (Operation operation : homebankRepository.getOperations()) {
+        for (Operation operation : homebankRepository.operations()) {
             operation.convertJulianToDate();
             OperationResponse operationResponse = new OperationResponse();
             BeanUtils.copyProperties(operation, operationResponse);

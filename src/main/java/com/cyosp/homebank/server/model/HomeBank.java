@@ -53,8 +53,4 @@ public class HomeBank {
 
     @XStreamImplicit(itemFieldName = "ope")
     private List<Operation> operations = new ArrayList<>();
-
-    public void checkVersion() {
-        if (!"1.2".equals(getV())) throw new IllegalStateException("Unsupported version: " + getV());
-    }
 }

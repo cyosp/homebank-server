@@ -50,10 +50,8 @@ public class HomebankController {
     }
 
     @GetMapping("/accounts")
-    public List<AccountResponse> getAccounts() {
-        List<AccountResponse> accounts = homebankService.getAccounts();
-        LOGGER.info("Accounts: " + accounts);
-        return accounts;
+    public List<AccountResponse> accounts() {
+        return homebankService.accounts();
     }
 
     @GetMapping("/accounts/{id}/operations")

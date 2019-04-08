@@ -12,9 +12,15 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Stream;
+
+import static java.util.Optional.ofNullable;
 
 @Repository
 public class HomebankRepository {
+
+    private final Integer NO_KEY = -1;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -43,7 +49,6 @@ public class HomebankRepository {
     public void load() {
         homeBank = (HomeBank) xstream.fromXML(homebankFilePath);
         LOGGER.info("Loaded: " + xstream.toXML(homeBank));
-        homeBank.checkVersion();
     }
 
     public HomeBank getInfos() {
@@ -58,8 +63,16 @@ public class HomebankRepository {
         return homeBank.getAccounts();
     }
 
-    public List<Operation> getOperationsByAccount(int id) {
-        throw new UnsupportedOperationException();
+    public Account account(int id) {
+        return homeBank.getAccounts().stream()
+                .filter(account -> account.getKey() == id)
+                .findFirst()
+                .orElseThrow(NoSuchElementException::new);
+    }
+
+    public Stream<Operation> operations(Account account) {
+        return homeBank.getOperations().stream()
+                .filter(operation -> ofNullable(operation.getAccount()).orElse(NO_KEY).equals(account.getKey()));
     }
 
     public List<Category> getCategoriesByAccount(int id) {
@@ -74,11 +87,18 @@ public class HomebankRepository {
         return homeBank.getCurrencies();
     }
 
+    public Currency currency(Account account) {
+        return homeBank.getCurrencies().stream()
+                .filter(currency -> ofNullable(currency.getKey()).orElse(NO_KEY).equals(account.getCurr()))
+                .findFirst()
+                .orElseThrow(NoSuchElementException::new);
+    }
+
     public List<Favorite> getFavorites() {
         return homeBank.getFavorites();
     }
 
-    public List<Operation> getOperations() {
+    public List<Operation> operations() {
         return homeBank.getOperations();
     }
 
