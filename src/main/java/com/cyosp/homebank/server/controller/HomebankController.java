@@ -1,6 +1,5 @@
 package com.cyosp.homebank.server.controller;
 
-import com.cyosp.homebank.server.model.PaymentMode;
 import com.cyosp.homebank.server.response.*;
 import com.cyosp.homebank.server.service.HomebankService;
 import org.slf4j.Logger;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/homebank")
@@ -33,10 +31,8 @@ public class HomebankController {
     }
 
     @GetMapping("/payment-modes")
-    public List<PaymentModeResponse> getPaymentModes() {
-        return PaymentMode.getPaymentModes().stream()
-                .map(pm -> new PaymentModeResponse(pm.getCode(), pm.getName(), pm.getManaged()))
-                .collect(Collectors.toList());
+    public List<PaymentModeResponse> paymentModes() {
+        return homebankService.paymentModes();
     }
 
     @GetMapping("/infos")

@@ -16,6 +16,7 @@ import java.util.List;
 import static com.cyosp.homebank.server.model.PaymentMode.NO_PAYMENT_MODE_DEFINED;
 import static com.cyosp.homebank.server.model.PaymentMode.getPaymentModes;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class HomebankService {
@@ -40,6 +41,12 @@ public class HomebankService {
         ret.setD(homeBank.getD());
 
         return ret;
+    }
+
+    public List<PaymentModeResponse> paymentModes() {
+        return getPaymentModes().stream()
+                .map(PaymentModeResponse::from)
+                .collect(toList());
     }
 
     public PropertiesResponse getProperties() {
@@ -106,7 +113,7 @@ public class HomebankService {
 
             PaymentMode paymentMode;
             if (ofNullable(operation.getPaymode()).isPresent()) {
-                paymentMode = getPaymentModes().stream()
+                paymentMode = PaymentMode.getPaymentModes().stream()
                         .filter(pm -> pm.getCode().equals(operation.getPaymode()))
                         .findFirst()
                         .orElse(NO_PAYMENT_MODE_DEFINED);
