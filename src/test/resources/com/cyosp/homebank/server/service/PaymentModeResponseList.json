@@ -1,0 +1,62 @@
+[
+  {
+    "code": null,
+    "name": "",
+    "managed": true
+  },
+  {
+    "code": 1,
+    "name": "Credit Card",
+    "managed": true
+  },
+  {
+    "code": 2,
+    "name": "Check",
+    "managed": true
+  },
+  {
+    "code": 3,
+    "name": "Cash",
+    "managed": true
+  },
+  {
+    "code": 4,
+    "name": "Transfer",
+    "managed": false
+  },
+  {
+    "code": 5,
+    "name": "Internal Transfer",
+    "managed": false
+  },
+  {
+    "code": 6,
+    "name": "Debit Card",
+    "managed": true
+  },
+  {
+    "code": 7,
+    "name": "Standing order",
+    "managed": false
+  },
+  {
+    "code": 8,
+    "name": "Electronic payment",
+    "managed": false
+  },
+  {
+    "code": 9,
+    "name": "Deposit",
+    "managed": true
+  },
+  {
+    "code": 10,
+    "name": "FI fee",
+    "managed": false
+  },
+  {
+    "code": 11,
+    "name": "Direct debit",
+    "managed": false
+  }
+]

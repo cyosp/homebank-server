@@ -3,11 +3,13 @@ package com.cyosp.homebank.server.response;
 import com.cyosp.homebank.server.model.PaymentMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @Data
 @AllArgsConstructor(access = PRIVATE)
+@NoArgsConstructor
 public class PaymentModeResponse {
 
     private Integer code;
