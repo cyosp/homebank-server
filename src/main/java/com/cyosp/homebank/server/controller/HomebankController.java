@@ -35,11 +35,6 @@ public class HomebankController {
         return homebankService.paymentModes();
     }
 
-    @GetMapping("/infos")
-    public InfosResponse getInfos() {
-        return homebankService.getInfos();
-    }
-
     @GetMapping("/properties")
     public PropertiesResponse getProperties() {
         return homebankService.getProperties();

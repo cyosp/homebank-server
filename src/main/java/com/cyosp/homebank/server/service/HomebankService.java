@@ -33,16 +33,6 @@ public class HomebankService {
         homebankRepository.load();
     }
 
-    public InfosResponse getInfos() {
-        InfosResponse ret = new InfosResponse();
-
-        HomeBank homeBank = homebankRepository.getInfos();
-        ret.setV(homeBank.getV());
-        ret.setD(homeBank.getD());
-
-        return ret;
-    }
-
     public List<PaymentModeResponse> paymentModes() {
         return PAYMENT_MODES.stream()
                 .map(PaymentModeResponse::from)

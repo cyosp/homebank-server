@@ -51,10 +51,6 @@ public class HomebankRepository {
         LOGGER.info("Loaded: " + xstream.toXML(homeBank));
     }
 
-    public HomeBank getInfos() {
-        return homeBank;
-    }
-
     public Properties getProperties() {
         return homeBank.getProperties();
     }
