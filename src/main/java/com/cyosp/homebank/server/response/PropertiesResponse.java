@@ -1,10 +1,8 @@
 package com.cyosp.homebank.server.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class PropertiesResponse {
 
     private String title;
