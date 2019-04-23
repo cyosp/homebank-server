@@ -2,8 +2,6 @@ package com.cyosp.homebank.server.controller;
 
 import com.cyosp.homebank.server.response.*;
 import com.cyosp.homebank.server.service.HomebankService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/homebank")
 public class HomebankController {
-
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final HomebankService homebankService;
 
