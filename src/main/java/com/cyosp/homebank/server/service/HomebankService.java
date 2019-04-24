@@ -7,16 +7,18 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.cyosp.homebank.server.model.PaymentMode.NO_PAYMENT_MODE_DEFINED;
 import static com.cyosp.homebank.server.model.PaymentMode.PAYMENT_MODES;
+import static java.text.NumberFormat.getCurrencyInstance;
+import static java.util.Currency.getInstance;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 @Service
 public class HomebankService {
@@ -48,18 +50,10 @@ public class HomebankService {
         return ret;
     }
 
-    private String formatAmount(BigDecimal amount, Currency currency) {
-        StringBuilder pattern = new StringBuilder("#,##0.");
-        for (int i = 0; i < currency.getFrac(); i++)
-            pattern.append("0");
-        DecimalFormat df = new DecimalFormat(pattern.toString());
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator(currency.getGchar());
-        symbols.setDecimalSeparator(currency.getDchar());
-        df.setDecimalFormatSymbols(symbols);
-        // TODO : Change how symbol is defined and placed
-        // https://stackoverflow.com/questions/29215163/currency-symbol-with-another-number-format
-        return df.format(amount) + " " + currency.getSymb();
+    String formatAmount(BigDecimal amount, Currency currency) {
+        NumberFormat formatter = getCurrencyInstance(getLocale());
+        formatter.setCurrency(getInstance(currency.getIso()));
+        return formatter.format(amount);
     }
 
     public List<AccountResponse> accounts() {
