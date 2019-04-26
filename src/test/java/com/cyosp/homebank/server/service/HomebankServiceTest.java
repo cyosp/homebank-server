@@ -1,5 +1,6 @@
 package com.cyosp.homebank.server.service;
 
+import com.cyosp.homebank.server.model.Currency;
 import com.cyosp.homebank.server.repository.HomebankRepository;
 import com.cyosp.homebank.server.response.PaymentModeResponse;
 import com.cyosp.homebank.server.response.PropertiesResponse;
@@ -13,9 +14,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.context.i18n.LocaleContextHolder.setLocale;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -55,5 +59,17 @@ class HomebankServiceTest {
                 });
 
         assertEquals(propertiesResponse, homebankService.getProperties());
+    }
+
+    @Test
+    void formatAmount() {
+        BigDecimal amount = new BigDecimal("123.4");
+
+        Currency currency = new Currency();
+        currency.setIso("EUR");
+
+        setLocale(new Locale("fr", "FR"));
+
+        assertEquals("123,40 €", homebankService.formatAmount(amount, currency));
     }
 }
