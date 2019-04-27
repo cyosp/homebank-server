@@ -159,21 +159,6 @@ public class HomebankService {
         return ret;
     }
 
-    public List<OperationResponse> getOperations() {
-        List<OperationResponse> ret = new ArrayList<>();
-
-        for (Operation operation : homebankRepository.operations()) {
-            operation.convertJulianToDate();
-            OperationResponse operationResponse = new OperationResponse();
-            copyProperties(operation, operationResponse);
-            operationResponse.setDateFormatted(SIMPLE_DATE_FORMAT.format(operation.getJavaDate()));
-            operationResponse.setAmount(formatAmount(operation.getAmount(), operation.getCurrency()));
-            ret.add(operationResponse);
-        }
-
-        return ret;
-    }
-
     public List<TagResponse> getTags() {
         List<TagResponse> ret = new ArrayList<>();
 

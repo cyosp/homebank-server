@@ -66,11 +66,6 @@ public class HomebankController {
         return homebankService.getFavorites();
     }
 
-    @GetMapping("/operations")
-    public List<OperationResponse> getOperations() {
-        return homebankService.getOperations();
-    }
-
     @GetMapping("/tags")
     public List<TagResponse> getTags() {
         return homebankService.getTags();
