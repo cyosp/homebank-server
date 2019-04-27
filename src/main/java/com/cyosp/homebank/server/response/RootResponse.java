@@ -1,10 +1,8 @@
 package com.cyosp.homebank.server.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class RootResponse {
 
     public static final Integer KEY_NOT_INITIALIZED = -100;

@@ -1,23 +1,19 @@
 package com.cyosp.homebank.server.response;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
-@ToString
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class AccountResponse extends RootResponse {
 
-    private OptionsResponse options;
+    private AccountParamsResponse params;
 
     private Integer pos;
 
     private Integer type;
-
-    private CurrencyResponse currency;
 
     private String name;
 
