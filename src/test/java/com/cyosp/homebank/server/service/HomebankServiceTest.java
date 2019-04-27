@@ -1,5 +1,6 @@
 package com.cyosp.homebank.server.service;
 
+import com.cyosp.homebank.server.model.Account;
 import com.cyosp.homebank.server.model.Currency;
 import com.cyosp.homebank.server.repository.HomebankRepository;
 import com.cyosp.homebank.server.response.PaymentModeResponse;
@@ -71,5 +72,12 @@ class HomebankServiceTest {
         setLocale(new Locale("fr", "FR"));
 
         assertEquals("123,40 €", homebankService.formatAmount(amount, currency));
+    }
+
+    @Test
+    void balance() {
+        Account account = homebankRepository.account(1);
+
+        assertEquals(new BigDecimal(1200), homebankService.balance(account));
     }
 }

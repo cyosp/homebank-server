@@ -86,6 +86,12 @@ public class HomebankService {
         return ret;
     }
 
+    BigDecimal balance(Account account) {
+        return homebankRepository.operations(account)
+                .map(Operation::getAmount)
+                .reduce(account.getInitial(), BigDecimal::add);
+    }
+
     public List<OperationResponse> getOperationsByAccount(int id) {
         List<OperationResponse> ret = new ArrayList<>();
 
