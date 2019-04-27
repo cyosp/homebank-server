@@ -64,14 +64,14 @@ class HomebankServiceTest {
 
     @Test
     void formatAmount() {
-        BigDecimal amount = new BigDecimal("123.4");
+        BigDecimal amount = new BigDecimal("1234.5");
 
         Currency currency = new Currency();
         currency.setIso("EUR");
 
         setLocale(new Locale("fr", "FR"));
 
-        assertEquals("123,40 €", homebankService.formatAmount(amount, currency));
+        assertEquals("1 234,50 €", homebankService.formatAmount(amount, currency));
     }
 
     @Test
