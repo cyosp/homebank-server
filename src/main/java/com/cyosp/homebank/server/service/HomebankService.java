@@ -92,6 +92,11 @@ public class HomebankService {
                 .reduce(account.getInitial(), BigDecimal::add);
     }
 
+    String balanceFormatted(Account account)
+    {
+        return formatAmount(balance(account), homebankRepository.currency(account));
+    }
+
     public List<OperationResponse> getOperationsByAccount(int id) {
         List<OperationResponse> ret = new ArrayList<>();
 

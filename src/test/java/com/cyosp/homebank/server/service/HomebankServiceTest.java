@@ -80,4 +80,13 @@ class HomebankServiceTest {
 
         assertEquals(new BigDecimal(1200), homebankService.balance(account));
     }
+
+    @Test
+    void balanceFormatted() {
+        Account account = homebankRepository.account(1);
+
+        setLocale(new Locale("en", "GB"));
+
+        assertEquals("€1,200.00", homebankService.balanceFormatted(account));
+    }
 }
