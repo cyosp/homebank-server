@@ -3,7 +3,6 @@ package com.cyosp.homebank.server.service;
 import com.cyosp.homebank.server.model.*;
 import com.cyosp.homebank.server.repository.HomebankRepository;
 import com.cyosp.homebank.server.response.*;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +17,7 @@ import static java.text.NumberFormat.getCurrencyInstance;
 import static java.util.Currency.getInstance;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.beans.BeanUtils.copyProperties;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 @Service
@@ -45,7 +45,7 @@ public class HomebankService {
         PropertiesResponse ret = new PropertiesResponse();
 
         Properties properties = homebankRepository.getProperties();
-        BeanUtils.copyProperties(properties, ret);
+        copyProperties(properties, ret);
 
         return ret;
     }
@@ -57,33 +57,19 @@ public class HomebankService {
     }
 
     public List<AccountResponse> accounts() {
-        List<AccountResponse> ret = new ArrayList<>();
+        return homebankRepository.getAccounts().stream()
+                .map(account -> {
+                    AccountResponse accountResponse = new AccountResponse();
+                    copyProperties(account, accountResponse);
 
-        for (Account account : homebankRepository.getAccounts()) {
-            Options options = new Options();
-            if (account.getFlags() != null) options.setOptions(account.getFlags());
+                    AccountParamsResponse accountParamsResponse = new AccountParamsResponse();
+                    copyProperties(new AccountParams(ofNullable(account.getFlags()).orElse(0)), accountParamsResponse);
+                    accountResponse.setParams(accountParamsResponse);
 
-            AccountResponse accountResponse = new AccountResponse();
-            BeanUtils.copyProperties(account, accountResponse);
+                    accountResponse.setBalance(balanceFormatted(account));
 
-            OptionsResponse optionsResponse = new OptionsResponse();
-            BeanUtils.copyProperties(options, optionsResponse);
-            accountResponse.setOptions(optionsResponse);
-
-            Currency currency = homebankRepository.currency(account);
-            CurrencyResponse currencyResponse = new CurrencyResponse();
-            BeanUtils.copyProperties(currency, currencyResponse);
-            accountResponse.setCurrency(currencyResponse);
-
-            BigDecimal balance = homebankRepository.operations(account)
-                    .map(Operation::getAmount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            accountResponse.setBalance(formatAmount(balance, currency));
-
-            ret.add(accountResponse);
-        }
-
-        return ret;
+                    return accountResponse;
+                }).collect(toList());
     }
 
     BigDecimal balance(Account account) {
@@ -103,7 +89,7 @@ public class HomebankService {
         homebankRepository.operations(homebankRepository.account(id)).forEach(operation -> {
             operation.convertJulianToDate();
             OperationResponse operationResponse = new OperationResponse();
-            BeanUtils.copyProperties(operation, operationResponse);
+            copyProperties(operation, operationResponse);
             operationResponse.setDateFormatted(SIMPLE_DATE_FORMAT.format(operation.getJavaDate()));
 
             PaymentMode paymentMode;
@@ -128,7 +114,7 @@ public class HomebankService {
 
         for (Category category : homebankRepository.getCategoriesByAccount(id)) {
             CategoryResponse categoryResponse = new CategoryResponse();
-            BeanUtils.copyProperties(category, categoryResponse);
+            copyProperties(category, categoryResponse);
             categoryResponse.setBalance(formatAmount(category.getBalance(), category.getCurrency()));
             ret.add(categoryResponse);
         }
@@ -141,7 +127,7 @@ public class HomebankService {
 
         for (Payee payee : homebankRepository.getPayeesByAccount(id)) {
             PayeeResponse payeeResponse = new PayeeResponse();
-            BeanUtils.copyProperties(payee, payeeResponse);
+            copyProperties(payee, payeeResponse);
             payeeResponse.setBalance(formatAmount(payee.getBalance(), payee.getCurrency()));
             ret.add(payeeResponse);
         }
@@ -154,7 +140,7 @@ public class HomebankService {
 
         for (Currency currency : homebankRepository.getCurrencies()) {
             CurrencyResponse currencyResponse = new CurrencyResponse();
-            BeanUtils.copyProperties(currency, currencyResponse);
+            copyProperties(currency, currencyResponse);
             ret.add(currencyResponse);
         }
 
@@ -166,7 +152,7 @@ public class HomebankService {
 
         for (Favorite favorite : homebankRepository.getFavorites()) {
             FavoriteResponse favoriteResponse = new FavoriteResponse();
-            BeanUtils.copyProperties(favorite, favoriteResponse);
+            copyProperties(favorite, favoriteResponse);
             ret.add(favoriteResponse);
         }
 
@@ -179,7 +165,7 @@ public class HomebankService {
         for (Operation operation : homebankRepository.operations()) {
             operation.convertJulianToDate();
             OperationResponse operationResponse = new OperationResponse();
-            BeanUtils.copyProperties(operation, operationResponse);
+            copyProperties(operation, operationResponse);
             operationResponse.setDateFormatted(SIMPLE_DATE_FORMAT.format(operation.getJavaDate()));
             operationResponse.setAmount(formatAmount(operation.getAmount(), operation.getCurrency()));
             ret.add(operationResponse);
@@ -193,7 +179,7 @@ public class HomebankService {
 
         for (Tag tag : homebankRepository.getTags()) {
             TagResponse tagResponse = new TagResponse();
-            BeanUtils.copyProperties(tag, tagResponse);
+            copyProperties(tag, tagResponse);
             ret.add(tagResponse);
         }
 
