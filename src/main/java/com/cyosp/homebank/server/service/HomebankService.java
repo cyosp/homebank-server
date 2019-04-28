@@ -9,10 +9,13 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.cyosp.homebank.server.model.PaymentMode.NO_PAYMENT_MODE_DEFINED;
 import static com.cyosp.homebank.server.model.PaymentMode.PAYMENT_MODES;
+import static java.text.DateFormat.SHORT;
+import static java.text.DateFormat.getDateInstance;
 import static java.text.NumberFormat.getCurrencyInstance;
 import static java.util.Currency.getInstance;
 import static java.util.Optional.ofNullable;
@@ -83,8 +86,9 @@ public class HomebankService {
         return formatAmount(balance(account), homebankRepository.currency(account));
     }
 
-    public List<OperationResponse> getOperationsByAccount(int id) {
-        List<OperationResponse> ret = new ArrayList<>();
+    String formatDate(Date date) {
+        return getDateInstance(SHORT, getLocale()).format(date);
+    }
 
         homebankRepository.operations(homebankRepository.account(id)).forEach(operation -> {
             operation.convertJulianToDate();
