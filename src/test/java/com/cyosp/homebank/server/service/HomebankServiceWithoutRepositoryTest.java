@@ -1,33 +1,25 @@
 package com.cyosp.homebank.server.service;
 
-import com.cyosp.homebank.server.model.Account;
 import com.cyosp.homebank.server.model.Currency;
 import com.cyosp.homebank.server.repository.HomebankRepository;
 import com.cyosp.homebank.server.response.PaymentModeResponse;
-import com.cyosp.homebank.server.response.PropertiesResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.context.i18n.LocaleContextHolder.setLocale;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-class HomebankServiceTest {
-
-    @Autowired
-    private HomebankRepository homebankRepository;
+class HomebankServiceWithoutRepositoryTest {
 
     private HomebankService homebankService;
 
@@ -37,7 +29,7 @@ class HomebankServiceTest {
 
     @BeforeEach
     void setUp() {
-        homebankService = new HomebankService(homebankRepository);
+        homebankService = new HomebankService(new HomebankRepository());
         resourceFolder = getClass().getPackage().getName().replaceAll("\\.", "/");
         objectMapper = new ObjectMapper();
     }
@@ -53,16 +45,6 @@ class HomebankServiceTest {
     }
 
     @Test
-    void properties() throws IOException {
-        final PropertiesResponse propertiesResponse = objectMapper.readValue(
-                getClass().getClassLoader().getResourceAsStream(resourceFolder + "/PropertiesResponse.json"),
-                new TypeReference<PropertiesResponse>() {
-                });
-
-        assertEquals(propertiesResponse, homebankService.getProperties());
-    }
-
-    @Test
     void formatAmount() {
         BigDecimal amount = new BigDecimal("1234.5");
 
@@ -75,18 +57,12 @@ class HomebankServiceTest {
     }
 
     @Test
-    void balance() {
-        Account account = homebankRepository.account(1);
+    void formatDate() throws ParseException {
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = parser.parse("2019-04-28");
 
-        assertEquals(new BigDecimal(1200), homebankService.balance(account));
-    }
+        setLocale(new Locale("fr", "FR"));
 
-    @Test
-    void balanceFormatted() {
-        Account account = homebankRepository.account(1);
-
-        setLocale(new Locale("en", "GB"));
-
-        assertEquals("€1,200.00", homebankService.balanceFormatted(account));
+        assertEquals("28/04/2019", homebankService.formatDate(date));
     }
 }
