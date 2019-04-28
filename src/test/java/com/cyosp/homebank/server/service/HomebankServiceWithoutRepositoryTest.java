@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
+import static java.time.LocalDate.parse;
+import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.context.i18n.LocaleContextHolder.setLocale;
 
@@ -57,12 +57,11 @@ class HomebankServiceWithoutRepositoryTest {
     }
 
     @Test
-    void formatDate() throws ParseException {
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = parser.parse("2019-04-28");
+    void formatDate() {
+        LocalDate localDate = parse("2019-04-28", ofPattern("yyyy-MM-dd"));
 
         setLocale(new Locale("fr", "FR"));
 
-        assertEquals("28/04/2019", homebankService.formatDate(date));
+        assertEquals("28/04/2019", homebankService.formatDate(localDate));
     }
 }

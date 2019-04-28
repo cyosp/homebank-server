@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.cyosp.homebank.server.model.PaymentMode.NO_PAYMENT_MODE_DEFINED;
 import static com.cyosp.homebank.server.model.PaymentMode.PAYMENT_MODES;
-import static java.text.DateFormat.SHORT;
-import static java.text.DateFormat.getDateInstance;
 import static java.text.NumberFormat.getCurrencyInstance;
+import static java.time.format.DateTimeFormatter.ofLocalizedDate;
+import static java.time.format.FormatStyle.SHORT;
 import static java.util.Currency.getInstance;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -86,8 +86,8 @@ public class HomebankService {
         return formatAmount(balance(account), homebankRepository.currency(account));
     }
 
-    String formatDate(Date date) {
-        return getDateInstance(SHORT, getLocale()).format(date);
+    String formatDate(LocalDate localDate) {
+        return localDate.format(ofLocalizedDate(SHORT).withLocale(getLocale()));
     }
 
         homebankRepository.operations(homebankRepository.account(id)).forEach(operation -> {
