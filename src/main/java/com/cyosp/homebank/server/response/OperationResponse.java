@@ -1,35 +1,25 @@
 package com.cyosp.homebank.server.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class OperationResponse extends RootResponse {
 
-    private Long date;
-
-    private String dateFormatted;
+    private String date;
 
     private String amount;
 
     private String balance;
 
-    private Integer account;
-
-    private Integer paymode;
-
-    private String paymodeName;
+    private String paymode;
 
     private Integer flags;
 
-    private Integer payee;
-
-    private String payeeName;
+    private String payee;
 
     private String wording;
 
-    private Integer category;
-
-    private String categoryName;
+    private String category;
 }

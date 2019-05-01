@@ -4,25 +4,23 @@ import com.cyosp.homebank.server.model.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class HomebankRepository {
 
     private final Integer NO_KEY = -1;
-
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private final Integer FIRST_KEY = 1;
 
     @Value("${homebank.file}")
     private File homebankFilePath;
@@ -48,7 +46,34 @@ public class HomebankRepository {
     @PostConstruct
     public void load() {
         homeBank = (HomeBank) xstream.fromXML(homebankFilePath);
-        LOGGER.info("Loaded: " + xstream.toXML(homeBank));
+        addMissingData();
+    }
+
+    private void addMissingData() {
+        homeBank.getAccounts().forEach(account -> {
+            BigDecimal balance = account.getInitial();
+            int key = FIRST_KEY;
+            for (Operation operation : operations(account)) {
+                operation.setKey(key++);
+
+                Category category = homeBank.getCategories().stream()
+                        .filter(cat -> cat.getKey().equals(operation.getCategoryKey()))
+                        .findFirst()
+                        .orElseGet(Category::new);
+                operation.setCategory(category);
+
+                Payee payee = homeBank.getPayees().stream()
+                        .filter(pay -> pay.getKey().equals(operation.getPayeeKey()))
+                        .findFirst()
+                        .orElseGet(Payee::new);
+                operation.setPayee(payee);
+
+                balance = balance.add(operation.getAmount());
+                operation.setBalance(balance);
+            }
+            account.setBalance(balance);
+        });
+
     }
 
     public Properties getProperties() {
@@ -66,9 +91,10 @@ public class HomebankRepository {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    public Stream<Operation> operations(Account account) {
+    public List<Operation> operations(Account account) {
         return homeBank.getOperations().stream()
-                .filter(operation -> ofNullable(operation.getAccount()).orElse(NO_KEY).equals(account.getKey()));
+                .filter(operation -> ofNullable(operation.getAccount()).orElse(NO_KEY).equals(account.getKey()))
+                .collect(toList());
     }
 
     public List<Category> getCategoriesByAccount(int id) {
@@ -92,10 +118,6 @@ public class HomebankRepository {
 
     public List<Favorite> getFavorites() {
         return homeBank.getFavorites();
-    }
-
-    public List<Operation> operations() {
-        return homeBank.getOperations();
     }
 
     public List<Tag> getTags() {

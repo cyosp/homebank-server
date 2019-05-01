@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
@@ -47,13 +46,6 @@ class HomebankServiceWithRepositoryTest {
                 });
 
         assertEquals(propertiesResponse, homebankService.getProperties());
-    }
-
-    @Test
-    void balance() {
-        Account account = homebankRepository.account(1);
-
-        assertEquals(new BigDecimal(1200), homebankService.balance(account));
     }
 
     @Test

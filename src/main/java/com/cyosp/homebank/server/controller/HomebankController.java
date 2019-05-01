@@ -41,9 +41,9 @@ public class HomebankController {
         return homebankService.accounts();
     }
 
-    @GetMapping("/accounts/{id}/operations")
-    public List<OperationResponse> getOperationsByAccount(@PathVariable int id) {
-        return homebankService.getOperationsByAccount(id);
+    @GetMapping("/accounts/{accountId}/operations")
+    public List<OperationResponse> operations(@PathVariable int accountId) {
+        return homebankService.operations(accountId);
     }
 
     @GetMapping("/accounts/{id}/categories")

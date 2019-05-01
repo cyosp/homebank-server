@@ -7,8 +7,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
+import static java.time.LocalDate.ofInstant;
+import static java.time.ZoneId.systemDefault;
 
 @Getter
 @Setter
@@ -16,8 +21,6 @@ public class Operation {
 
     @XStreamOmitField
     private Integer key;
-
-    //-----------------------------
 
     @XStreamAsAttribute
     @XStreamAlias("date")
@@ -41,45 +44,38 @@ public class Operation {
 
     @XStreamAsAttribute
     @XStreamAlias("payee")
-    private Integer payee;
+    private Integer payeeKey;
+    @XStreamOmitField
+    private Payee payee;
 
     @XStreamAsAttribute
     @XStreamAlias("category")
-    private Integer category;
+    private Integer categoryKey;
+    @XStreamOmitField
+    private Category category;
 
     @XStreamAsAttribute
     @XStreamAlias("wording")
     private String wording;
 
-    //--------------------------
-
-    @XStreamOmitField
-    private Date javaDate;
-
-    @XStreamOmitField
-    private String payeeName;
-
-    @XStreamOmitField
-    private String categoryName;
-
-    @XStreamOmitField
-    private Currency currency;
-
     @XStreamOmitField
     private BigDecimal balance;
 
-    public void convertJulianToDate() {
+    public LocalDate localDate() {
+        final long DAY_TO_MILLISECONDS = 24 * 60 * 60 * 1000;
 
-        long diffInMs = getDate() * (24 * 60 * 60 * 1000);
+        long diffInMs = date * DAY_TO_MILLISECONDS;
 
         GregorianCalendar gregorianCalendar = new GregorianCalendar(1, GregorianCalendar.JANUARY, 1);
         long dateInMs = diffInMs + gregorianCalendar.getTimeInMillis();
-        int dayNbr = (int) (dateInMs / (24 * 60 * 60 * 1000));
+        int dayNbr = (int) (dateInMs / DAY_TO_MILLISECONDS);
 
         GregorianCalendar newGregorianCalendar = new GregorianCalendar();
         newGregorianCalendar.setTimeInMillis(0);
         newGregorianCalendar.add(GregorianCalendar.DAY_OF_MONTH, dayNbr + 2);
 
-        setJavaDate(newGregorianCalendar.getTime());
+        TimeZone timeZone = newGregorianCalendar.getTimeZone();
+        ZoneId zoneId = timeZone == null ? systemDefault() : timeZone.toZoneId();
+        return ofInstant(newGregorianCalendar.toInstant(), zoneId);
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +24,6 @@ import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 
 @Service
 public class HomebankService {
-
-    private final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 
     private final HomebankRepository homebankRepository;
 
@@ -75,42 +72,45 @@ public class HomebankService {
                 }).collect(toList());
     }
 
-    BigDecimal balance(Account account) {
-        return homebankRepository.operations(account)
-                .map(Operation::getAmount)
-                .reduce(account.getInitial(), BigDecimal::add);
-    }
-
-    String balanceFormatted(Account account)
-    {
-        return formatAmount(balance(account), homebankRepository.currency(account));
+    String balanceFormatted(Account account) {
+        return formatAmount(account.getBalance(), homebankRepository.currency(account));
     }
 
     String formatDate(LocalDate localDate) {
         return localDate.format(ofLocalizedDate(SHORT).withLocale(getLocale()));
     }
 
-        homebankRepository.operations(homebankRepository.account(id)).forEach(operation -> {
-            operation.convertJulianToDate();
+    public List<OperationResponse> operations(int accountId) {
+        Account account = homebankRepository.account(accountId);
+        Currency currency = homebankRepository.currency(account);
+
+        List<OperationResponse> operations = new ArrayList<>();
+        for (Operation operation : homebankRepository.operations(account)) {
             OperationResponse operationResponse = new OperationResponse();
             copyProperties(operation, operationResponse);
-            operationResponse.setDateFormatted(SIMPLE_DATE_FORMAT.format(operation.getJavaDate()));
+
+            operationResponse.setDate(formatDate(operation.localDate()));
 
             PaymentMode paymentMode;
             if (ofNullable(operation.getPaymode()).isPresent()) {
                 paymentMode = PAYMENT_MODES.stream()
-                        .filter(pm -> pm.getCode().equals(operation.getPaymode()))
+                        .filter(pm -> ofNullable(pm.getCode()).isPresent() && pm.getCode().equals(operation.getPaymode()))
                         .findFirst()
                         .orElse(NO_PAYMENT_MODE_DEFINED);
             } else paymentMode = NO_PAYMENT_MODE_DEFINED;
-            operationResponse.setPaymodeName(paymentMode.getName());
+            operationResponse.setPaymode(paymentMode.getName());
 
-            operationResponse.setAmount(formatAmount(operation.getAmount(), operation.getCurrency()));
-            operationResponse.setBalance(formatAmount(operation.getBalance(), operation.getCurrency()));
-            ret.add(operationResponse);
-        });
+            operationResponse.setCategory(operation.getCategory().getName());
 
-        return ret;
+            operationResponse.setPayee(operation.getPayee().getName());
+
+            operationResponse.setAmount(formatAmount(operation.getAmount(), currency));
+
+            operationResponse.setBalance(formatAmount(operation.getBalance(), currency));
+
+            operations.add(operationResponse);
+        }
+        return operations;
     }
 
     public List<CategoryResponse> getCategoriesByAccount(int id) {

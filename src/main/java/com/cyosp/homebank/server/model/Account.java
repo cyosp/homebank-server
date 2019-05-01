@@ -2,6 +2,7 @@ package com.cyosp.homebank.server.model;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -48,4 +49,7 @@ public class Account {
     @XStreamAsAttribute
     @XStreamAlias("cheque2")
     private Long cheque2;
+
+    @XStreamOmitField
+    private BigDecimal balance;
 }
