@@ -3,8 +3,11 @@ package com.cyosp.homebank.server.model;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class Account {
@@ -40,5 +43,12 @@ public class Account {
     private Long cheque2;
 
     @XStreamOmitField
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<Category> categories;
+
+    @XStreamOmitField
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private BigDecimal balance;
 }

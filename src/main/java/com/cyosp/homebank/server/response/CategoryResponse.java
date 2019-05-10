@@ -1,16 +1,13 @@
 package com.cyosp.homebank.server.response;
 
-import com.cyosp.homebank.server.model.Currency;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
-@Setter
-public class CategoryResponse extends RootResponse {
+@Data
+@Builder
+public class CategoryResponse {
 
     private String name;
 
     private String balance;
-
-    private Currency currency;
 }

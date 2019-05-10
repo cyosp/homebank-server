@@ -113,17 +113,14 @@ public class HomebankService {
         return operations;
     }
 
-    public List<CategoryResponse> getCategoriesByAccount(int id) {
-        List<CategoryResponse> ret = new ArrayList<>();
-
-        for (Category category : homebankRepository.getCategoriesByAccount(id)) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            copyProperties(category, categoryResponse);
-            categoryResponse.setBalance(formatAmount(category.getBalance(), category.getCurrency()));
-            ret.add(categoryResponse);
-        }
-
-        return ret;
+    public List<CategoryResponse> categories(int accountId) {
+        Account account = homebankRepository.account(accountId);
+        return account.getCategories().stream()
+                .map(category -> CategoryResponse.builder()
+                        .name(category.getName())
+                        .balance(formatAmount(category.getBalances().get(account), homebankRepository.currency(account)))
+                        .build())
+                .collect(toList());
     }
 
     public List<PayeeResponse> getPayeesByAccount(int id) {

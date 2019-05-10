@@ -10,9 +10,13 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
+import static java.math.BigDecimal.ZERO;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -51,16 +55,37 @@ public class HomebankRepository {
 
     private void addMissingData() {
         homeBank.getAccounts().forEach(account -> {
+            account.setCategories(new ArrayList<>());
+
             BigDecimal balance = account.getInitial();
             int key = FIRST_KEY;
             for (Operation operation : operations(account)) {
                 operation.setKey(key++);
 
-                Category category = homeBank.getCategories().stream()
-                        .filter(cat -> cat.getKey().equals(operation.getCategoryKey()))
-                        .findFirst()
-                        .orElseGet(Category::new);
-                operation.setCategory(category);
+                ofNullable(operation.getCategoryKey()).ifPresent(categoryKey ->
+                {
+                    Predicate<Category> categoryPredicate = category -> category.getKey().equals(operation.getCategoryKey());
+
+                    Category category = homeBank.getCategories().stream()
+                            .filter(categoryPredicate)
+                            .findFirst()
+                            .orElseGet(() -> {
+                                throw new IllegalStateException();
+                            });
+                    operation.setCategory(category);
+
+                    if (account.getCategories().stream().noneMatch(categoryPredicate)) {
+                        account.getCategories().add(category);
+
+                        if (!ofNullable(category.getBalances()).isPresent())
+                            category.setBalances(new HashMap<>());
+
+                        if (!ofNullable(category.getBalances().get(account)).isPresent())
+                            category.getBalances().put(account, ZERO);
+                    }
+
+                    category.getBalances().put(account, category.getBalances().get(account).add(operation.getAmount()));
+                });
 
                 Payee payee = homeBank.getPayees().stream()
                         .filter(pay -> pay.getKey().equals(operation.getPayeeKey()))
@@ -95,10 +120,6 @@ public class HomebankRepository {
         return homeBank.getOperations().stream()
                 .filter(operation -> ofNullable(operation.getAccount()).orElse(NO_KEY).equals(account.getKey()))
                 .collect(toList());
-    }
-
-    public List<Category> getCategoriesByAccount(int id) {
-        throw new UnsupportedOperationException();
     }
 
     public List<Payee> getPayeesByAccount(int id) {
