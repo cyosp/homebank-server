@@ -9,8 +9,18 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import static com.cyosp.homebank.server.model.HomeBank.NO_KEY;
+
 @Data
 public class Category {
+
+    @XStreamOmitField
+    public static final Category NO_CATEGORY =  new Category();
+
+    static {
+        NO_CATEGORY.key = NO_KEY;
+        NO_CATEGORY.name = "";
+    }
 
     @XStreamAsAttribute
     private Integer key;
