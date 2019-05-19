@@ -3,12 +3,11 @@ package com.cyosp.homebank.server.controller;
 import com.cyosp.homebank.server.response.*;
 import com.cyosp.homebank.server.service.HomebankService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static java.lang.Long.MAX_VALUE;
 
 @RestController
 @RequestMapping("/homebank")
@@ -42,8 +41,8 @@ public class HomebankController {
     }
 
     @GetMapping("/accounts/{accountId}/operations")
-    public List<OperationResponse> operations(@PathVariable int accountId) {
-        return homebankService.operations(accountId);
+    public List<OperationResponse> operations(@PathVariable int accountId, @RequestParam(name = "limit", required = false, defaultValue = "" + MAX_VALUE) long limit) {
+        return homebankService.operations(accountId, limit);
     }
 
     @GetMapping("/accounts/{accountId}/categories")

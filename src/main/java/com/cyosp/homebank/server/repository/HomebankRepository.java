@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import static com.cyosp.homebank.server.model.Category.NO_CATEGORY;
 import static com.cyosp.homebank.server.model.HomeBank.NO_KEY;
 import static java.math.BigDecimal.ZERO;
+import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -117,9 +119,20 @@ public class HomebankRepository {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    public List<Operation> operations(Account account) {
+    private Stream<Operation> operationsAsStream(Account account) {
         return homeBank.getOperations().stream()
-                .filter(operation -> ofNullable(operation.getAccount()).orElse(NO_KEY).equals(account.getKey()))
+                .filter(operation -> ofNullable(operation.getAccount()).orElse(NO_KEY).equals(account.getKey()));
+    }
+
+    private List<Operation> operations(Account account) {
+        return operationsAsStream(account)
+                .collect(toList());
+    }
+
+    public List<Operation> operations(Account account, long limit) {
+        return operationsAsStream(account)
+                .sorted(comparing(Operation::getKey).reversed())
+                .limit(limit)
                 .collect(toList());
     }
 

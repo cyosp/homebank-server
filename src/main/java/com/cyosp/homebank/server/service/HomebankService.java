@@ -80,12 +80,12 @@ public class HomebankService {
         return localDate.format(ofLocalizedDate(SHORT).withLocale(getLocale()));
     }
 
-    public List<OperationResponse> operations(int accountId) {
+    public List<OperationResponse> operations(int accountId, long limit) {
         Account account = homebankRepository.account(accountId);
         Currency currency = homebankRepository.currency(account);
 
         List<OperationResponse> operations = new ArrayList<>();
-        for (Operation operation : homebankRepository.operations(account)) {
+        for (Operation operation : homebankRepository.operations(account, limit)) {
             OperationResponse operationResponse = new OperationResponse();
             copyProperties(operation, operationResponse);
 
