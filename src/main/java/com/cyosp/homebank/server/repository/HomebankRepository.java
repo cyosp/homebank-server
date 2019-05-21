@@ -131,7 +131,7 @@ public class HomebankRepository {
 
     public List<Operation> operations(Account account, long limit) {
         return operationsAsStream(account)
-                .sorted(comparing(Operation::getKey).reversed())
+                .sorted(comparing(Operation::getDate).reversed())
                 .limit(limit)
                 .collect(toList());
     }
