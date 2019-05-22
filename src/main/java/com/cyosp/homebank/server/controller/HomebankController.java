@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.cyosp.homebank.server.model.HomeBank.NO_KEY;
 import static java.lang.Long.MAX_VALUE;
 
 @RestController
@@ -41,8 +42,10 @@ public class HomebankController {
     }
 
     @GetMapping("/accounts/{accountId}/operations")
-    public List<OperationResponse> operations(@PathVariable int accountId, @RequestParam(name = "limit", required = false, defaultValue = "" + MAX_VALUE) long limit) {
-        return homebankService.operations(accountId, limit);
+    public List<OperationResponse> operations(@PathVariable int accountId,
+                                              @RequestParam(name = "limit", required = false, defaultValue = "" + MAX_VALUE) long limit,
+                                              @RequestParam(name = "from", required = false, defaultValue = "" + NO_KEY) long from) {
+        return homebankService.operations(accountId, from, limit);
     }
 
     @GetMapping("/accounts/{accountId}/categories")

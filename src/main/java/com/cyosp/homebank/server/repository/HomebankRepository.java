@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static com.cyosp.homebank.server.model.Category.NO_CATEGORY;
@@ -129,9 +130,15 @@ public class HomebankRepository {
                 .collect(toList());
     }
 
-    public List<Operation> operations(Account account, long limit) {
+    public List<Operation> operations(Account account, long from, long limit) {
+        AtomicBoolean fromFound = new AtomicBoolean(false);
         return operationsAsStream(account)
                 .sorted(comparing(Operation::getDate).reversed())
+                .filter(operation -> {
+                    if (!fromFound.get() && (from == NO_KEY || operation.getKey() == from))
+                        fromFound.set(true);
+                    return fromFound.get();
+                })
                 .limit(limit)
                 .collect(toList());
     }
