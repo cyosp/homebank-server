@@ -62,7 +62,7 @@ public class Operation {
     private BigDecimal balance;
 
     public LocalDate localDate() {
-        final long DAY_TO_MILLISECONDS = 24 * 60 * 60 * 1000;
+        final long DAY_TO_MILLISECONDS = 24 * 60 * 60 * 1000L;
 
         long diffInMs = date * DAY_TO_MILLISECONDS;
 
