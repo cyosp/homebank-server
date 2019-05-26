@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class HomebankRepository {
 
-    private final Integer FIRST_KEY = 1;
+    private static final Integer FIRST_KEY = 1;
 
     @Value("${homebank.file}")
     private File homebankFilePath;
