@@ -127,6 +127,7 @@ public class HomebankRepository {
 
     private List<Operation> operations(Account account) {
         return operationsAsStream(account)
+                .sorted(comparing(Operation::getDate))
                 .collect(toList());
     }
 
