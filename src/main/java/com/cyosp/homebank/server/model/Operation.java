@@ -14,6 +14,7 @@ import java.util.TimeZone;
 
 import static java.time.LocalDate.ofInstant;
 import static java.time.ZoneId.systemDefault;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Getter
 @Setter
@@ -77,5 +78,10 @@ public class Operation {
         TimeZone timeZone = newGregorianCalendar.getTimeZone();
         ZoneId zoneId = timeZone == null ? systemDefault() : timeZone.toZoneId();
         return ofInstant(newGregorianCalendar.toInstant(), zoneId);
+    }
+
+    public boolean filter(OperationQueryModel operationQueryModel) {
+        final String wordingQuery = operationQueryModel.getWording();
+        return isNotEmpty(wording) && isNotEmpty(wordingQuery) && wording.contains(wordingQuery);
     }
 }

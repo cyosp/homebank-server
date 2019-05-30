@@ -1,14 +1,19 @@
 package com.cyosp.homebank.server.controller;
 
+import com.cyosp.homebank.server.model.OperationQueryModel;
+import com.cyosp.homebank.server.request.OperationQueryRequest;
 import com.cyosp.homebank.server.response.*;
 import com.cyosp.homebank.server.service.HomebankService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.cyosp.homebank.server.model.HomeBank.NO_KEY;
 import static java.lang.Long.MAX_VALUE;
+import static org.springframework.beans.BeanUtils.copyProperties;
 
 @RestController
 @RequestMapping("/homebank")
@@ -44,8 +49,16 @@ public class HomebankController {
     @GetMapping("/accounts/{accountId}/operations")
     public List<OperationResponse> operations(@PathVariable int accountId,
                                               @RequestParam(name = "limit", required = false, defaultValue = "" + MAX_VALUE) long limit,
-                                              @RequestParam(name = "from", required = false, defaultValue = "" + NO_KEY) long from) {
-        return homebankService.operations(accountId, from, limit);
+                                              @RequestParam(name = "from", required = false, defaultValue = "" + NO_KEY) long from,
+                                              @RequestParam(name = "q", required = false) String jsonOperationQueryRequest) throws IOException {
+
+        final OperationQueryRequest operationQueryRequest = new ObjectMapper()
+                .readValue(jsonOperationQueryRequest, OperationQueryRequest.class);
+
+        OperationQueryModel operationQueryModel = new OperationQueryModel();
+        copyProperties(operationQueryRequest, operationQueryModel);
+
+        return homebankService.operations(accountId, operationQueryModel, from, limit);
     }
 
     @GetMapping("/accounts/{accountId}/categories")
