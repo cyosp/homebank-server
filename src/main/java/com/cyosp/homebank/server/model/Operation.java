@@ -80,8 +80,20 @@ public class Operation {
         return ofInstant(newGregorianCalendar.toInstant(), zoneId);
     }
 
-    public boolean filter(OperationQueryModel operationQueryModel) {
+    public boolean match(OperationQueryModel operationQueryModel) {
         final String wordingQuery = operationQueryModel.getWording();
-        return isNotEmpty(wording) && isNotEmpty(wordingQuery) && wording.contains(wordingQuery);
+
+        final String operationCategory = category.getName();
+        final String categoryQuery = operationQueryModel.getCategory();
+
+        boolean match = true;
+
+        if (isNotEmpty(wordingQuery))
+            match = isNotEmpty(wording) && wording.contains(wordingQuery);
+
+        if (isNotEmpty(categoryQuery))
+            match &= isNotEmpty(operationCategory) && operationCategory.contains(categoryQuery);
+
+        return match;
     }
 }

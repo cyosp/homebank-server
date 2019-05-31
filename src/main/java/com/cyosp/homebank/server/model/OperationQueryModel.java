@@ -6,4 +6,6 @@ import lombok.Data;
 public class OperationQueryModel {
 
     private String wording;
+
+    private String category;
 }

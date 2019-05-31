@@ -134,7 +134,7 @@ public class HomebankRepository {
     public List<Operation> operations(Account account, OperationQueryModel operationQueryModel, long from, long limit) {
         AtomicBoolean fromFound = new AtomicBoolean(false);
         return operationsAsStream(account)
-                .filter(operation -> operation.filter(operationQueryModel))
+                .filter(operation -> operation.match(operationQueryModel))
                 .sorted(comparing(Operation::getDate).reversed())
                 .filter(operation -> {
                     if (!fromFound.get() && (from == NO_KEY || operation.getKey() == from))
