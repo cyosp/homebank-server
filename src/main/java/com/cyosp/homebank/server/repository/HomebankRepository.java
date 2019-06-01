@@ -65,31 +65,7 @@ public class HomebankRepository {
             for (Operation operation : operations(account)) {
                 operation.setKey(key++);
 
-                Category operationCategory;
-                if (ofNullable(operation.getCategoryKey()).isPresent()) {
-                    operationCategory = homeBank.getCategories().stream()
-                            .filter(category -> category.getKey().equals(operation.getCategoryKey()))
-                            .findFirst()
-                            .orElseGet(() ->
-                            {
-                                throw new IllegalStateException();
-                            });
-                } else
-                    operationCategory = NO_CATEGORY;
-                operation.setCategory(operationCategory);
-
-                if (account.getCategories().stream()
-                        .noneMatch(category -> category.getKey().equals(operation.getCategoryKey()))) {
-                    account.getCategories().add(operationCategory);
-
-                    if (!ofNullable(operationCategory.getBalances()).isPresent())
-                        operationCategory.setBalances(new HashMap<>());
-
-                    if (!ofNullable(operationCategory.getBalances().get(account)).isPresent())
-                        operationCategory.getBalances().put(account, ZERO);
-                }
-
-                operationCategory.getBalances().put(account, operationCategory.getBalances().get(account).add(operation.getAmount()));
+                setOperationCategory(account, operation);
 
                 Payee payee = homeBank.getPayees().stream()
                         .filter(pay -> pay.getKey().equals(operation.getPayeeKey()))
@@ -103,6 +79,34 @@ public class HomebankRepository {
             account.setBalance(balance);
         });
 
+    }
+
+    private void setOperationCategory(Account account, Operation operation) {
+        Category operationCategory;
+        if (ofNullable(operation.getCategoryKey()).isPresent()) {
+            operationCategory = homeBank.getCategories().stream()
+                    .filter(category -> category.getKey().equals(operation.getCategoryKey()))
+                    .findFirst()
+                    .orElseGet(() ->
+                    {
+                        throw new IllegalStateException();
+                    });
+        } else
+            operationCategory = NO_CATEGORY;
+        operation.setCategory(operationCategory);
+
+        if (account.getCategories().stream()
+                .noneMatch(category -> category.getKey().equals(operation.getCategoryKey()))) {
+            account.getCategories().add(operationCategory);
+
+            if (!ofNullable(operationCategory.getBalances()).isPresent())
+                operationCategory.setBalances(new HashMap<>());
+
+            if (!ofNullable(operationCategory.getBalances().get(account)).isPresent())
+                operationCategory.getBalances().put(account, ZERO);
+        }
+
+        operationCategory.getBalances().put(account, operationCategory.getBalances().get(account).add(operation.getAmount()));
     }
 
     public Properties getProperties() {
