@@ -129,7 +129,6 @@ public class HomebankService {
         for (Payee payee : homebankRepository.getPayeesByAccount(id)) {
             PayeeResponse payeeResponse = new PayeeResponse();
             copyProperties(payee, payeeResponse);
-            payeeResponse.setBalance(formatAmount(payee.getBalance(), payee.getCurrency()));
             ret.add(payeeResponse);
         }
 
