@@ -14,6 +14,7 @@ import java.util.TimeZone;
 
 import static java.time.LocalDate.ofInstant;
 import static java.time.ZoneId.systemDefault;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Getter
@@ -89,10 +90,10 @@ public class Operation {
         boolean match = true;
 
         if (isNotEmpty(wordingQuery))
-            match = isNotEmpty(wording) && wording.contains(wordingQuery);
+            match = isNotEmpty(wording) && containsIgnoreCase(wording, wordingQuery);
 
         if (isNotEmpty(categoryQuery))
-            match &= isNotEmpty(operationCategory) && operationCategory.contains(categoryQuery);
+            match &= isNotEmpty(operationCategory) && containsIgnoreCase(operationCategory, categoryQuery);
 
         return match;
     }
