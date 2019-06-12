@@ -50,5 +50,10 @@ public class Account {
     @XStreamOmitField
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    private List<Payee> payees;
+
+    @XStreamOmitField
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private BigDecimal balance;
 }
