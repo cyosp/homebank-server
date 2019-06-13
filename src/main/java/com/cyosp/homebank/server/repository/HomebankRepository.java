@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import static com.cyosp.homebank.server.model.Category.NO_CATEGORY;
 import static com.cyosp.homebank.server.model.HomeBank.NO_KEY;
+import static com.cyosp.homebank.server.model.Payee.NO_PAYEE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
@@ -59,6 +60,7 @@ public class HomebankRepository {
     private void addMissingData() {
         homeBank.getAccounts().forEach(account -> {
             account.setCategories(new ArrayList<>());
+            account.setPayees(new ArrayList<>());
 
             BigDecimal balance = account.getInitial();
             int key = FIRST_KEY;
@@ -67,11 +69,7 @@ public class HomebankRepository {
 
                 setOperationCategory(account, operation);
 
-                Payee payee = homeBank.getPayees().stream()
-                        .filter(pay -> pay.getKey().equals(operation.getPayeeKey()))
-                        .findFirst()
-                        .orElseGet(Payee::new);
-                operation.setPayee(payee);
+                setOperationPayee(account, operation);
 
                 balance = balance.add(operation.getAmount());
                 operation.setBalance(balance);
@@ -107,6 +105,34 @@ public class HomebankRepository {
         }
 
         operationCategory.getBalances().put(account, operationCategory.getBalances().get(account).add(operation.getAmount()));
+    }
+
+    private void setOperationPayee(Account account, Operation operation) {
+        Payee operationPayee;
+        if (ofNullable(operation.getPayeeKey()).isPresent()) {
+            operationPayee = homeBank.getPayees().stream()
+                    .filter(payee -> payee.getKey().equals(operation.getPayeeKey()))
+                    .findFirst()
+                    .orElseGet(() ->
+                    {
+                        throw new IllegalStateException();
+                    });
+        } else
+            operationPayee = NO_PAYEE;
+        operation.setPayee(operationPayee);
+
+        if (account.getPayees().stream()
+                .noneMatch(payee -> payee.getKey().equals(operation.getPayeeKey()))) {
+            account.getPayees().add(operationPayee);
+
+            if (!ofNullable(operationPayee.getBalances()).isPresent())
+                operationPayee.setBalances(new HashMap<>());
+
+            if (!ofNullable(operationPayee.getBalances().get(account)).isPresent())
+                operationPayee.getBalances().put(account, ZERO);
+        }
+
+        operationPayee.getBalances().put(account, operationPayee.getBalances().get(account).add(operation.getAmount()));
     }
 
     public Properties getProperties() {
