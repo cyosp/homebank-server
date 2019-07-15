@@ -15,7 +15,20 @@ plugins {
 
     id "application"
 
+    id 'jacoco'
     id "org.sonarqube" version "2.7.1"
+}
+
+jacoco {
+    toolVersion = "0.8.4"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+    }
 }
 
 test {
