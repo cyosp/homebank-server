@@ -18,6 +18,10 @@ plugins {
     id "org.sonarqube" version "2.7.1"
 }
 
+test {
+    useJUnitPlatform()
+}
+
 version = '2.0.0-SNAPSHOT'
 sourceCompatibility = 1.9
 targetCompatibility = 1.9
