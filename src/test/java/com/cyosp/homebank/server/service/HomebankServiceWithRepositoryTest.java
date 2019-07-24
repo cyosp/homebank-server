@@ -54,6 +54,6 @@ class HomebankServiceWithRepositoryTest {
 
         setLocale(new Locale("en", "GB"));
 
-        assertEquals("€1,200.00", homebankService.balanceFormatted(account));
+        assertEquals("€1,038.45", homebankService.balanceFormatted(account));
     }
 }

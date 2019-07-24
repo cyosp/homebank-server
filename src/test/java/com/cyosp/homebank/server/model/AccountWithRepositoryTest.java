@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class AccountTest {
+class AccountWithRepositoryTest {
 
     @Autowired
     private HomebankRepository homebankRepository;
@@ -22,6 +22,6 @@ class AccountTest {
     void balance() {
         Account account = homebankRepository.account(1);
 
-        assertEquals(new BigDecimal(1200), account.getBalance());
+        assertEquals(new BigDecimal("1038.45"), account.getBalance());
     }
 }

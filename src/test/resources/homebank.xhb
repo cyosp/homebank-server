@@ -5,8 +5,26 @@
 <account key="1" pos="1" curr="1" name="Main account" initial="100" minimum="0"/>
 <pay key="1" name="Employer"/>
 <pay key="2" name="Bank"/>
+<pay key="3" name="Internet provider"/>
+<pay key="4" name="Insurance provider"/>
+<pay key="5" name="Mobile phone provider"/>
+<pay key="6" name="Water provider"/>
+<pay key="7" name="Electricity provider"/>
+<pay key="8" name="Grocery shopping provider A"/>
 <cat key="1" flags="2" name="Salary"/>
 <cat key="2" name="Apartment credit"/>
+<cat key="3" name="Internet"/>
+<cat key="4" name="Insurance"/>
+<cat key="5" name="Mobile phone"/>
+<cat key="6" name="Water"/>
+<cat key="7" name="Electricity"/>
+<cat key="8" name="Grocery shopping"/>
 <ope date="737150" amount="1500" account="1" paymode="4" flags="2" payee="1" category="1" info="Monthly salary"/>
 <ope date="737154" amount="-400" account="1" paymode="11" payee="2" category="2" info="Monthly credit"/>
+<ope date="737155" amount="-40" account="1" paymode="11" payee="3" category="3"/>
+<ope date="737155" amount="-100" account="1" paymode="11" payee="4" category="4"/>
+<ope date="737156" amount="-20" account="1" paymode="11" payee="5" category="5"/>
+<ope date="737157" amount="-50" account="1" paymode="11" payee="6" category="6"/>
+<ope date="737157" amount="-75" account="1" paymode="11" payee="7" category="7"/>
+<ope date="737158" amount="123.45" account="1" paymode="6" flags="2" payee="8" category="8"/>
 </homebank>
