@@ -25,3 +25,22 @@ In that case build the bootable JAR and run after:
 `./gradlew docker`
 
 Built Docker image name: `cyosp/homebank-server`
+
+## Run
+
+### Bootable JAR
+
+Put a `homebank.xhb` file at project level and run:
+
+`java -jar build/libs/homebank-server-*.jar`
+
+### Docker image
+
+Replace:
+
+ * `/path/to/your/homebank/file.xhb` with your own Homebank file path
+ * `2.0.0-SNAPSHOT` with homebank-server version expected
+
+And run:
+
+`docker run -v /path/to/your/homebank/file.xhb:/homebank.xhb -p 8080:8080 cyosp/homebank-server:2.0.0-SNAPSHOT`
