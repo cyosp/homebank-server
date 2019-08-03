@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class AccountWithRepositoryTest {
+class AccountTest {
 
     @Autowired
     private HomebankRepository homebankRepository;

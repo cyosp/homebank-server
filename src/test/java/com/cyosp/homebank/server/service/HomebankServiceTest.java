@@ -19,7 +19,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.context.i18n.LocaleContextHolder.setLocale;
 
-class HomebankServiceWithoutRepositoryTest {
+class HomebankServiceTest {
 
     private HomebankService homebankService;
 
