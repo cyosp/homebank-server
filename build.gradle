@@ -29,15 +29,28 @@ jacoco {
 }
 
 jacocoTestReport {
+    executionData(file("${project.buildDir}/jacoco/test.exec"), file("${project.buildDir}/jacoco/integrationTest.exec"))
+    getAdditionalSourceDirs().from(sourceSets.main.allSource.srcDirs)
+    getSourceDirectories().from(sourceSets.main.allSource.srcDirs)
+    getClassDirectories().from(project.files(sourceSets.main.output))
     reports {
         xml.enabled true
-        html.enabled true
+        xml.destination(file("${project.buildDir}/reports/jacoco/all-tests/jacocoAllTestReport.xml"))
+        html.enabled false
         csv.enabled false
     }
 }
 
 test {
     useJUnitPlatform()
+}
+
+sonarqube {
+    properties {
+        property "sonar.coverage.jacoco.xmlReportPaths", jacocoTestReport.reports.xml.destination
+        properties["sonar.junit.reportPaths"] += integrationTest.reports.junitXml.destination
+        properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
+    }
 }
 
 version = "${homebankServerVersion}"
