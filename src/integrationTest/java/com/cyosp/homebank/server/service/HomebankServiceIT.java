@@ -20,7 +20,7 @@ import static org.springframework.context.i18n.LocaleContextHolder.setLocale;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class HomebankServiceTest {
+class HomebankServiceIT {
 
     @Autowired
     private HomebankRepository homebankRepository;
