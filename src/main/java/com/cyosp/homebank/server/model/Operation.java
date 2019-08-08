@@ -1,5 +1,6 @@
 package com.cyosp.homebank.server.model;
 
+import com.cyosp.homebank.server.request.OperationQueryRequest;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -81,11 +82,11 @@ public class Operation {
         return ofInstant(newGregorianCalendar.toInstant(), zoneId);
     }
 
-    public boolean match(OperationQueryModel operationQueryModel) {
-        final String wordingQuery = operationQueryModel.getWording();
+    public boolean match(OperationQueryRequest operationQueryRequest) {
+        final String wordingQuery = operationQueryRequest.getWording();
 
         final String operationCategory = category.getName();
-        final String categoryQuery = operationQueryModel.getCategory();
+        final String categoryQuery = operationQueryRequest.getCategory();
 
         boolean match = true;
 

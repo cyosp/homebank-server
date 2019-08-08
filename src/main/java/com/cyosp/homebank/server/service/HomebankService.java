@@ -2,6 +2,7 @@ package com.cyosp.homebank.server.service;
 
 import com.cyosp.homebank.server.model.*;
 import com.cyosp.homebank.server.repository.HomebankRepository;
+import com.cyosp.homebank.server.request.OperationQueryRequest;
 import com.cyosp.homebank.server.response.*;
 import org.springframework.stereotype.Service;
 
@@ -80,12 +81,12 @@ public class HomebankService {
         return localDate.format(ofLocalizedDate(SHORT).withLocale(getLocale()));
     }
 
-    public List<OperationResponse> operations(int accountId, OperationQueryModel operationQueryModel, long from, long limit) {
+    public List<OperationResponse> operations(int accountId, OperationQueryRequest operationQueryRequest, long from, long limit) {
         Account account = homebankRepository.account(accountId);
         Currency currency = homebankRepository.currency(account);
 
         List<OperationResponse> operations = new ArrayList<>();
-        for (Operation operation : homebankRepository.operations(account, operationQueryModel, from, limit)) {
+        for (Operation operation : homebankRepository.operations(account, operationQueryRequest, from, limit)) {
             OperationResponse operationResponse = new OperationResponse();
             copyProperties(operation, operationResponse);
 

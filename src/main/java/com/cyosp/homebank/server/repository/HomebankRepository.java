@@ -1,6 +1,7 @@
 package com.cyosp.homebank.server.repository;
 
 import com.cyosp.homebank.server.model.*;
+import com.cyosp.homebank.server.request.OperationQueryRequest;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
@@ -161,10 +162,10 @@ public class HomebankRepository {
                 .collect(toList());
     }
 
-    public List<Operation> operations(Account account, OperationQueryModel operationQueryModel, long from, long limit) {
+    public List<Operation> operations(Account account, OperationQueryRequest operationQueryRequest, long from, long limit) {
         AtomicBoolean fromFound = new AtomicBoolean(false);
         return operationsAsStream(account)
-                .filter(operation -> operation.match(operationQueryModel))
+                .filter(operation -> operation.match(operationQueryRequest))
                 .sorted(comparing(Operation::getDate).reversed())
                 .filter(operation -> {
                     if (!fromFound.get() && (from == NO_KEY || operation.getKey() == from))

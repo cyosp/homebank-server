@@ -1,6 +1,5 @@
 package com.cyosp.homebank.server.controller;
 
-import com.cyosp.homebank.server.model.OperationQueryModel;
 import com.cyosp.homebank.server.request.OperationQueryRequest;
 import com.cyosp.homebank.server.response.*;
 import com.cyosp.homebank.server.service.HomebankService;
@@ -13,7 +12,6 @@ import java.util.List;
 
 import static com.cyosp.homebank.server.model.HomeBank.NO_KEY;
 import static java.lang.Long.MAX_VALUE;
-import static org.springframework.beans.BeanUtils.copyProperties;
 
 @RestController
 @RequestMapping("/homebank")
@@ -55,10 +53,7 @@ public class HomebankController {
         final OperationQueryRequest operationQueryRequest = new ObjectMapper()
                 .readValue(jsonOperationQueryRequest, OperationQueryRequest.class);
 
-        OperationQueryModel operationQueryModel = new OperationQueryModel();
-        copyProperties(operationQueryRequest, operationQueryModel);
-
-        return homebankService.operations(accountId, operationQueryModel, from, limit);
+        return homebankService.operations(accountId, operationQueryRequest, from, limit);
     }
 
     @GetMapping("/accounts/{accountId}/categories")
