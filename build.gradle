@@ -20,6 +20,8 @@ plugins {
     id "org.sonarqube" version "2.7.1"
 
     id 'com.palantir.docker' version "0.22.1"
+
+    id 'idea'
 }
 
 apply from: "$rootDir/integration-test.gradle"
@@ -50,6 +52,12 @@ sonarqube {
         property "sonar.coverage.jacoco.xmlReportPaths", jacocoTestReport.reports.xml.destination
         properties["sonar.junit.reportPaths"] += integrationTest.reports.junitXml.destination
         properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
+    }
+}
+
+idea {
+    module {
+        testSourceDirs += sourceSets.integrationTest.java.srcDirs
     }
 }
 

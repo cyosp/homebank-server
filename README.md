@@ -44,3 +44,12 @@ Replace:
 And run:
 
 `docker run -v /path/to/your/homebank/file.xhb:/homebank.xhb -p 8080:8080 cyosp/homebank-server:2.0.0-SNAPSHOT`
+
+## IntelliJ configuration
+
+Steps to follow:
+ * Checkout the repository and go into project folder
+ * Run: `./gradlew idea`
+ * Start IntelliJ and open project folder
+ * Click: `Import Gradle Project` when IntelliJ displays information event: `IntelliJ IDEA found a Gradle build script`
+ 
