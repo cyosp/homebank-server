@@ -38,7 +38,8 @@ jacocoTestReport {
     reports {
         xml.enabled true
         xml.destination(file("${project.buildDir}/reports/jacoco/all-tests/jacocoAllTestReport.xml"))
-        html.enabled false
+        html.enabled true
+        html.destination(file("${project.buildDir}/reports/jacoco/all-tests/jacocoAllTestReport"))
         csv.enabled false
     }
 }
