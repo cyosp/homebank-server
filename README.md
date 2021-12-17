@@ -52,4 +52,7 @@ Steps to follow:
  * Run: `./gradlew idea`
  * Start IntelliJ and open project folder
  * Click: `Import Gradle Project` when IntelliJ displays information event: `IntelliJ IDEA found a Gradle build script`
- 
+
+## About Log4Shell
+
+Vulnerability is due to `log4j-core` library which is not part of project dependencies
